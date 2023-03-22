@@ -1,6 +1,6 @@
 # T-Shirt Folding App
 
-This is a mobile application built using React Native and Expo. The app helps users keep track of the number of T-shirts they have folded and displays the current Bluetooth connection status.
+This is a mobile application built using React Native and Expo. The app could be used as a remote controller for the automatic t-shirt folder and it also helps users keep track of the number of T-shirts they have folded and displays the current Bluetooth connection status.
 
 ## Features
 
