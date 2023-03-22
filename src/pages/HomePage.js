@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,7 +8,14 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 const HomePage = () => {
   const [tshirtCount, setTshirtCount] = useState(0);
   const [progress, setProgress] = useState(0);
-  const bluetoothConnected = false; // Replace with the actual Bluetooth connection status
+  const [orientation, setOrientation] = useState('portrait');
+  const bluetoothConnected = true; // Replace with the actual Bluetooth connection status
+
+  const handleOrientationChange = () => {
+    const { width, height } = Dimensions.get('window');
+    const newOrientation = width > height ? 'landscape' : 'portrait';
+    setOrientation(newOrientation);
+  };
 
   const handleFoldButtonPress = async () => {
     if (!bluetoothConnected) {
@@ -37,7 +44,12 @@ const HomePage = () => {
   };
 
   useEffect(() => {
+    Dimensions.addEventListener('change', handleOrientationChange);
     loadTshirtCount();
+
+    return () => {
+      Dimensions.removeEventListener('change', handleOrientationChange);
+    };
   }, []);
 
   return (
@@ -46,10 +58,10 @@ const HomePage = () => {
         colors={['#6200EE', '#B819F7']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.foldButton}
+        style={styles.foldButton(orientation)}
       >
         <AnimatedCircularProgress
-          size={750}
+          size={orientation === 'portrait' ? 750 : 500}
           width={10}
           fill={progress}
           tintColor="#00e0ff"
@@ -90,19 +102,21 @@ const styles = StyleSheet.create({
   },
   connected: {
     color: 'green',
+    fontWeight: 'bold',
   },
   disconnected: {
     color: 'red',
+    fontWeight: 'bold',
   },
-  foldButton: {
-    width: 750,
-    height: 750,
+  foldButton: (orientation) => ({
+    width: orientation === 'portrait' ? 750 : 500,
+    height: orientation === 'portrait' ? 750 : 500,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 1000,
     alignSelf: 'center',
     marginTop: 50,
-  },
+  }),
   touchableArea: {
     width: '100%',
     height: '100%',
@@ -123,3 +137,4 @@ const styles = StyleSheet.create({
 });
 
 export default HomePage;
+
